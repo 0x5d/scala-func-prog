@@ -28,7 +28,7 @@ object Lists {
 
   def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
     case Nil => l
-    case x :: xs if (f(x))=> dropWhile(xs, f)
+    case x :: xs if f(x) => dropWhile(xs, f)
     case _ => l
   }
 
@@ -40,7 +40,6 @@ object Lists {
   def tail[A](as: List[A]): List[A] = as match {
     case Nil => Nil
     case List(_) => Nil
-    case _ :: xs => xs
     case _ :: xs => xs
   }
 

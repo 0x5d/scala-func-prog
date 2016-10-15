@@ -16,7 +16,4 @@ object Math {
     }
     loop(n, 1)
   }
-
-  def mean(ns: Seq[Double]): Double =
-    ns.su
 }
