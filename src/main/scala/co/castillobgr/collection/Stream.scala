@@ -1,6 +1,7 @@
 package co.castillobgr.collection
 
 import Stream._
+import co.castillobgr.Math.fib
 
 sealed trait Stream[+A] {
 
@@ -41,6 +42,9 @@ sealed trait Stream[+A] {
 
   def map[B](f: A => B): Stream[B] =
     foldRight(empty[B])((a, b) => cons(f(a), b))
+
+  def filter(f: A => Boolean): Stream[A] =
+    foldRight(empty[A])((a, b) => if (f(a)) cons(a, b) else b)
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -56,4 +60,23 @@ object Stream {
 
   def apply[A](as: A*): Stream[A] =
     if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
+
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case Some((h, s)) => cons(h, unfold(s)(f))
+    case None => empty
+  }
+
+//  My ugly version :(
+//  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = {
+//    f(z).map(x => cons(x._1, unfold(x._2)(f))).getOrElse(empty)
+//  }
+
+  def constant[A](a: A): Stream[A] =
+    unfold(a)(_ => Option((a, a)))
+
+  def from(n: Int): Stream[Int] =
+    unfold(n)(x => Option((x, x + 1)))
+
+  def fibs: Stream[Int] =
+    unfold(0)(x => Option((fib(x), x + 1)))
 }
